@@ -1,5 +1,4 @@
 import sys
-import os
 import math
 import numpy as np
 
@@ -19,14 +18,14 @@ def main():
     for i in range(8):
         calc_entropy(my_data[0], my_data[1], my_data[2], i+1)
 
-    print("Best rgb entropy: ", print_type(rgb_entropy.index(min(rgb_entropy)) + 1))
-    print("Best blue entropy: ", print_type(b_entropy.index(min(b_entropy)) + 1))
-    print("Best green entropy: ", print_type(g_entropy.index(min(g_entropy)) + 1))
-    print("Best red entropy: ", print_type(r_entropy.index(min(r_entropy)) + 1))
+    print("Best rgb entropy: ",     print_type(rgb_entropy.index(min(rgb_entropy)) + 1))
+    print("Best blue entropy: ",    print_type(b_entropy.index(min(b_entropy)) + 1))
+    print("Best green entropy: ",   print_type(g_entropy.index(min(g_entropy)) + 1))
+    print("Best red entropy: ",     print_type(r_entropy.index(min(r_entropy)) + 1))
 
 
 def calc_entropy(data, x, y, param):
-    encoded = np.zeros((x, y, 3))
+    encoded = np.zeros((y, x, 3))
 
     for i in range(1, y + 1):
         for j in range(1, x + 1):
@@ -96,20 +95,32 @@ def print_entropy(image, param):
 
     how_many = sum(b_occurrences)
 
-    print_stats(all_occurrences, all_probability, 3 * how_many, 0)
-    print_stats(r_occurrences, r_probability, how_many, 1)
-    print_stats(g_occurrences, g_probability, how_many, 2)
-    print_stats(b_occurrences, b_probability, how_many, 3)
+    print_stats(all_occurrences, all_probability, 3 * how_many, 0, param)
+    print_stats(r_occurrences, r_probability, how_many, 1, param)
+    print_stats(g_occurrences, g_probability, how_many, 2, param)
+    print_stats(b_occurrences, b_probability, how_many, 3, param)
 
 
-def print_stats(occurrences, probability, x, what):
+def print_stats(occurrences, probability, x, what, switch):
+    global rgb_entropy
+    global r_entropy
+    global g_entropy
+    global b_entropy
+
     entropy = 0
     for i in occurrences:
-        probability.append(i / (3 * x))
+        probability.append(i / x)
     for num in probability:
         entropy += num * (-math.log(num, 2))
-    if type != 0:
-        rgb_entropy.append(entropy)
+    if switch != 0:
+        if what == 0:
+            rgb_entropy.append(entropy)
+        elif what == 1:
+            r_entropy.append(entropy)
+        elif what == 2:
+            g_entropy.append(entropy)
+        elif what == 3:
+            b_entropy.append(entropy)
 
     if what == 0:
         print("Rgb entropy: ", entropy)
@@ -185,4 +196,7 @@ def print_type(param):
     elif param == 7:
         return "Predictor = (N + W)/2"
     elif param == 8:
-        return "Predictor = new= standard"
+        return "Predictor = New Standard"
+
+
+main()
